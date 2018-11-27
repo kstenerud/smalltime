@@ -1,7 +1,7 @@
 Smalltime
 =========
 
-A simple and convenient date & time system in 64 bits.
+A simple and convenient date & time format in 64 bits.
 
 
 
