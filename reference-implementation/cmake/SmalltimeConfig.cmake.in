@@ -1,0 +1,10 @@
+get_filename_component(SMALLTIME_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(CMakeFindDependencyMacro)
+
+list(APPEND CMAKE_MODULE_PATH ${SMALLTIME_CMAKE_DIR})
+
+if(NOT TARGET SMALLTIME::SMALLTIME)
+    include("${SMALLTIME_CMAKE_DIR}/SmalltimeTargets.cmake")
+endif()
+
+set(SMALLTIME_LIBRARIES SMALLTIME::SMALLTIME)
