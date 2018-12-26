@@ -1,40 +1,4 @@
-Reference Implementation for Smalltime
-======================================
-
-A C implementation to demonstrate smalltime.
-
-
-
-Requirements
-------------
-
-  * CMake 3.5 or higher
-  * A C compiler
-  * A C++ compiler (for the unit tests)
-
-
-
-C Library Dependencies
-----------------------
-
- * stdint.h: For standard integer types
-
-
-
-Building
---------
-
-    mkdir build
-    cd build
-    cmake ..
-    make
-
-
-
-Usage
------
-
-```c
+#include <gtest/gtest.h>
 #include <smalltime/smalltime.h>
 #include <stdio.h>
 
@@ -70,11 +34,9 @@ static void demonstrate_smalltime()
 		smalltime_get_microsecond(some_time)
 		);
 }
-```
 
 
-
-Running Tests
--------------
-
-    ./test/smalltime_test
+TEST(Readme, example)
+{
+	demonstrate_smalltime();
+}

@@ -22,6 +22,16 @@ static void test_encode_decode(int year, int doy, int hour, int minute, int seco
     EXPECT_EQ(minute, actual_minute);
     EXPECT_EQ(second, actual_second);
     EXPECT_EQ(microsecond, actual_microsecond);
+
+    smalltime piecemeal_encoded = 0;
+    piecemeal_encoded = smalltime_with_year(encoded, year);
+    piecemeal_encoded = smalltime_with_day(encoded, doy);
+    piecemeal_encoded = smalltime_with_hour(encoded, hour);
+    piecemeal_encoded = smalltime_with_minute(encoded, minute);
+    piecemeal_encoded = smalltime_with_second(encoded, second);
+    piecemeal_encoded = smalltime_with_microsecond(encoded, microsecond);
+
+    EXPECT_EQ(encoded, piecemeal_encoded);
 }
 
 static void test_single_date(

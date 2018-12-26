@@ -23,6 +23,7 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
 add_executable(smalltime_test
                    src/main.cpp
                    src/library.cpp
+                   src/readme_example.cpp
                )
 
 target_compile_features(smalltime_test PRIVATE cxx_auto_type)
