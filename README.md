@@ -39,7 +39,7 @@ Time fields are bit-encoded according to the following table, which lists their 
 
 The year field is interpreted as a signed two's complement integer. Values <= 0 represent dates in the BC era.
 
-As the Anno Domini system has no zero year (there is no 0 BC or 0 AD), BC era dates are interpreted offset by 1 in order to preserve numeric continuity (0 = 1 BC, -1 = 2 BC, and so on). Thus, years from 131073 BC to 131071 AD are supported.
+As the Anno Domini system has no zero year (there is no 0 BC or 0 AD), BC era dates are interpreted offset by 1 in order to preserve numeric continuity (0 = 1 BC, -1 = 2 BC, and so on), matching how ISO-8601 represents years. Thus, years from 131073 BC to 131071 AD are supported.
 
 
 ### The Day Field
