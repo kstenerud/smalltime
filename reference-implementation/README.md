@@ -3,31 +3,14 @@ Reference Implementation for Smalltime
 
 A C implementation to demonstrate smalltime.
 
-
-
-Requirements
-------------
-
-  * CMake 3.5 or higher
-  * A C compiler
-  * A C++ compiler (for the unit tests)
+Implemented as a header only (`smalltime.h`).
 
 
 
-C Library Dependencies
-----------------------
+Header Dependencies
+-------------------
 
  * stdint.h: For standard integer types
-
-
-
-Building
---------
-
-    mkdir build
-    cd build
-    cmake ..
-    make
 
 
 
@@ -71,6 +54,25 @@ static void demonstrate_smalltime()
 		);
 }
 ```
+
+
+
+Requirements to Build Tests
+---------------------------
+
+  * CMake 3.5 or higher
+  * A C compiler
+  * A C++ compiler
+
+
+
+Building Tests
+--------------
+
+    mkdir build
+    cd build
+    cmake ..
+    make
 
 
 
