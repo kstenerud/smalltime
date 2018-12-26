@@ -9,7 +9,8 @@ Features
 --------
 
  * Encodes a complete date & time into a 64-bit signed integer.
- * Maintenance-free (no human managed tables to update).
+ * Fields (including year) are compatible with ISO-8601.
+ * Maintenance-free (no leap second tables to update).
  * Easily converts to human readable fields.
  * Supports hundreds of thousands of years.
  * Supports time units to the microsecond.
