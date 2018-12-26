@@ -55,6 +55,41 @@ static void demonstrate_smalltime()
 }
 ```
 
+Converting from Gregorian month and day to day-of-year is pretty simple:
+
+```c
+static int g_days_to_the_month[] =
+{
+    0, // Nothing
+    g_days_to_the_month[ 0] +  0, // January
+    g_days_to_the_month[ 1] + 31, // February
+    g_days_to_the_month[ 2] + 28, // March
+    g_days_to_the_month[ 3] + 31, // April
+    g_days_to_the_month[ 4] + 30, // May
+    g_days_to_the_month[ 5] + 31, // June
+    g_days_to_the_month[ 6] + 30, // July
+    g_days_to_the_month[ 7] + 31, // August
+    g_days_to_the_month[ 8] + 31, // September
+    g_days_to_the_month[ 9] + 30, // October
+    g_days_to_the_month[10] + 31, // November
+    g_days_to_the_month[11] + 30, // December
+};
+
+static inline int is_leap_year(int year)
+{
+    return (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
+}
+
+unsigned int to_doy(int year, unsigned int month, unsigned int day)
+{
+    unsigned int days = g_days_to_the_month[month] + day;
+    if(is_leap_year(year))
+    {
+        days++;
+    }
+    return days;
+}
+```
 
 
 Requirements to Build Tests
