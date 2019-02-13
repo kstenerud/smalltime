@@ -1,97 +1,166 @@
+# In this cmake file:
+#  * The project is called "Smalltime"
+#  * The implementation language is C, but also includes CXX to support gtest
+#  * The build target is a static library
+#  * Target is "smalltime_target", and the library file name is "libsmalltime.a" (on UNIX)
+
+
 cmake_minimum_required(VERSION 3.5)
-project(libsmalltime VERSION 1.0.0 LANGUAGES C CXX)
 
-#Make sure that custom modules are found
-list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
+# Set policy to highest version, up to 3.13
+if(${CMAKE_VERSION} VERSION_LESS 3.13)
+    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+else()
+    cmake_policy(VERSION 3.13)
+endif()
 
 
-##############################################
-# Create target and set properties
 
-add_library(smalltime
-    src/library.c
+#################
+# Configuration #
+#################
+
+# Variables so we don't repeat ourselves
+set(LOCAL_PROJECT_VERSION     "1.0.0")
+set(LOCAL_PROJECT_VENDOR      "Karl Stenerud")
+set(LOCAL_PROJECT_NAMESPACE   "KS")
+set(LOCAL_PROJECT_NAME        "Smalltime")
+set(LOCAL_PROJECT_OUTPUT_NAME "smalltime")
+set(LOCAL_PROJECT_DESCRIPTION "A simple and convenient binary date & time format in 64 bits")
+
+project(${LOCAL_PROJECT_NAME}
+        VERSION ${LOCAL_PROJECT_VERSION}
+        DESCRIPTION ${LOCAL_PROJECT_DESCRIPTION}
+        LANGUAGES C CXX)
+
+# Our build target is a static library. Other options are SHARED and MODULE.
+add_library(smalltime_target STATIC
+        src/library.c
 )
 
-#Add an alias so that library can be used inside the build tree, e.g. when testing
-add_library(SMALLTIME::smalltime ALIAS smalltime)
+# Also make it accessible via namespace
+add_library(${LOCAL_PROJECT_NAMESPACE}::${LOCAL_PROJECT_NAME} ALIAS smalltime_target)
 
-#Set target properties
-target_include_directories(smalltime
+
+
+################
+# Dependencies #
+################
+
+# Subdir with CMake support
+# add_subdirectory(some/subdir)
+
+
+
+############
+# Building #
+############
+
+# Change the output name from "libsmalltime_target.a" to "libsmalltime.a"
+set_target_properties(smalltime_target PROPERTIES
+    OUTPUT_NAME ${LOCAL_PROJECT_OUTPUT_NAME}
+)
+
+# Where to find the header files
+target_include_directories(smalltime_target
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_BINARY_DIR}/gen-private-include
 )
 
-target_compile_features(smalltime PRIVATE cxx_auto_type)
-target_compile_options(smalltime PRIVATE $<$<CXX_COMPILER_ID:GNU>:
+# Generate a private header "version.h" defining PROJECT_VERSION
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/gen-private-include/version.h"
+)
+
+# Turn on warnings
+target_compile_options(smalltime_target PRIVATE $<$<CXX_COMPILER_ID:GNU>:
     -Wall
     -Wextra
-#    -Wduplicated-cond
-#    -Wduplicated-branches
+    -Wduplicated-cond
+    -Wduplicated-branches
     -Wlogical-op
-#    -Wrestrict
-#    -Wnull-dereference
+    -Wrestrict
+    -Wnull-dereference
     -Wjump-misses-init
     -Wdouble-promotion
     -Wshadow
     -fstrict-aliasing
     -Wformat=2
+    # Only turn pedantic on temporarily
+    # -pedantic
+>)
+target_compile_options(smalltime_target PRIVATE $<$<CXX_COMPILER_ID:MSVC>:
+    /W4
+    /w44265
+    /w44061
+    /w44062
 >)
 
-##############################################
-# Installation instructions
 
-include(GNUInstallDirs)
-set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/smalltime)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+###########
+# Testing #
+###########
 
-install(TARGETS smalltime
-    EXPORT smalltime-targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-)
+# Simple testing:
+# include(CTest)
+# add_test(NAME TestName COMMAND TargetName)
 
-#This is required so that the exported target has the name smalltime and not smalltime
-set_target_properties(smalltime PROPERTIES EXPORT_NAME smalltime)
 
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+# Using a subdir:
+option(PACKAGE_TESTS "Build the tests" ON)
+if(PACKAGE_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
-#Export the targets to a script
-install(EXPORT smalltime-targets
-  FILE
-    smalltimeTargets.cmake
-  NAMESPACE
-    SMALLTIME::
-  DESTINATION
-    ${INSTALL_CONFIGDIR}
-)
 
-#Create a ConfigVersion.cmake file
+
+
+#############
+# Exporting #
+#############
+
+# Write a version file so that CMake's find_package() can check for a specific
+# version of this package.
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/SmalltimeConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
+    ${LOCAL_PROJECT_NAME}ConfigVersion.cmake
+    VERSION ${PACKAGE_VERSION}
     COMPATIBILITY AnyNewerVersion
 )
 
-configure_package_config_file(${CMAKE_CURRENT_LIST_DIR}/cmake/SmalltimeConfig.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/SmalltimeConfig.cmake
-    INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
+include(GNUInstallDirs)
+install(TARGETS smalltime_target EXPORT ${LOCAL_PROJECT_NAME}Targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
+install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-#Install the config, configversion and custom find modules
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/SmalltimeConfig.cmake
-    ${CMAKE_CURRENT_BINARY_DIR}/SmalltimeConfigVersion.cmake
-    DESTINATION ${INSTALL_CONFIGDIR}
+export(TARGETS smalltime_target NAMESPACE ${LOCAL_PROJECT_NAMESPACE}:: FILE ${LOCAL_PROJECT_NAME}Targets.cmake)
+export(PACKAGE ${LOCAL_PROJECT_NAME})
+
+# Packaging
+set(CPACK_PACKAGE_VENDOR ${LOCAL_PROJECT_VENDOR})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${LOCAL_PROJECT_DESCRIPTION})
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENCE.md")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+
+# Source package generator
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_IGNORE_FILES
+    /.git*
+    /dist
+    /.*build.*
+    /\\\\.DS_Store
 )
-
-export(EXPORT smalltime-targets FILE ${CMAKE_CURRENT_BINARY_DIR}/SmalltimeTargets.cmake NAMESPACE SMALLTIME::)
-
-#Register package in user's package registry
-export(PACKAGE smalltime)
-
-add_subdirectory(test)
