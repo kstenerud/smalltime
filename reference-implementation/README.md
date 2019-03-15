@@ -95,7 +95,8 @@ unsigned int to_doy(int year, unsigned int month, unsigned int day)
 Requirements to Build Tests
 ---------------------------
 
-  * CMake 3.5 or higher
+  * Meson 0.49 or newer
+  * Ninja 1.8.2 or newer
   * A C compiler
   * A C++ compiler
 
@@ -104,14 +105,23 @@ Requirements to Build Tests
 Building Tests
 --------------
 
-    mkdir build
-    cd build
-    cmake ..
-    make
+    meson build
+    ninja -C build
 
 
 
 Running Tests
 -------------
 
-    ./test/smalltime_test
+    ninja -C build test
+
+For the full report:
+
+    ./build/run_tests
+
+
+
+Installing
+----------
+
+    ninja -C build install
