@@ -92,18 +92,18 @@ unsigned int to_doy(int year, unsigned int month, unsigned int day)
 ```
 
 
-Requirements to Build Tests
----------------------------
+Requirements
+------------
 
   * Meson 0.49 or newer
   * Ninja 1.8.2 or newer
   * A C compiler
-  * A C++ compiler
+  * A C++ compiler (for the tests)
 
 
 
-Building Tests
---------------
+Building
+--------
 
     meson build
     ninja -C build
