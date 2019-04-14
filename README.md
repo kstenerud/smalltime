@@ -60,6 +60,13 @@ If any field contains data outside of its allowed range, the time value is inval
 
 
 
+Time Zone
+---------
+
+Absent any accompanying time zone information, the time zone is assumed to be UTC.
+
+
+
 Example
 -------
 
