@@ -78,6 +78,16 @@ func assert_time_equivalence(t *testing.T, year, month, day, hour, minute, secon
 	}
 }
 
+func assert_greater(t *testing.T, greater, smaller Smalltime) {
+	if(greater <= smaller) {
+		t.Errorf("%04d-%02d-%02dT%02d:%02d:%02d.%06d is not smaller than %04d-%02d-%02dT%02d:%02d:%02d.%06d",
+			greater.Year(), greater.Month(), greater.Day(), greater.Hour(),
+			greater.Minute(), greater.Second(), greater.Microsecond(),
+			smaller.Year(), smaller.Month(), smaller.Day(), smaller.Hour(),
+			smaller.Minute(), smaller.Second(), smaller.Microsecond())
+	}
+}
+
 var days_in_month_normal = [...]int{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 var days_in_month_leap = [...]int{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 
@@ -282,7 +292,23 @@ func TestDoyToYmd(t *testing.T) {
 	assert_yd_to_md(t, 2101, 1, 1, 1)
 }
 
-func TestReadmeExamples(t *testing.T) {
+func TestComparisons(t *testing.T) {
+    assert_greater(t, New(2000, 1, 1, 0, 0, 0, 1), New(2000, 1, 1, 0, 0, 0, 0))
+    assert_greater(t, New(2000, 1, 1, 0, 0, 1, 0), New(2000, 1, 1, 0, 0, 0, 999999))
+    assert_greater(t, New(2000, 1, 1, 0, 0, 2, 0), New(2000, 1, 1, 0, 0, 1, 0))
+    assert_greater(t, New(2000, 1, 1, 0, 1, 0, 0), New(2000, 1, 1, 0, 0, 60, 0))
+    assert_greater(t, New(2000, 1, 1, 0, 2, 0, 0), New(2000, 1, 1, 0, 1, 0, 0))
+    assert_greater(t, New(2000, 1, 1, 1, 0, 0, 0), New(2000, 1, 1, 0, 59, 0, 0))
+    assert_greater(t, New(2000, 1, 1, 2, 0, 0, 0), New(2000, 1, 1, 1, 0, 0, 0))
+    assert_greater(t, New(2000, 1, 2, 0, 0, 0, 0), New(2000, 1, 1, 23, 0, 0, 0))
+    assert_greater(t, New(2000, 1, 2, 0, 0, 0, 0), New(2000, 1, 1, 0, 0, 0, 0))
+    assert_greater(t, New(2005, 1, 1, 0, 0, 0, 0), New(2004, 12, 31, 0, 0, 0, 0))
+    assert_greater(t, New(1, 1, 1, 0, 0, 0, 0), New(0, 1, 1, 0, 0, 0, 0))
+    assert_greater(t, New(0, 1, 1, 0, 0, 0, 0), New(-1, 1, 1, 0, 0, 0, 0))
+    assert_greater(t, New(1, 1, 1, 0, 0, 0, 0), New(-1, 1, 1, 0, 0, 0, 0))
+}
+
+func TestSpecExamples(t *testing.T) {
 	assert_decode(t, Smalltime(0x1f06568590dbc2e), 1985, 10, 26, 8, 22, 16, 900142)
 	assert_decode(t, Smalltime(0x1f06588590dbc2e), 1985, 10, 27, 8, 22, 16, 900142)
 	assert_decode(t, Smalltime(0x1f06568550dbc2e), 1985, 10, 26, 8, 21, 16, 900142)
