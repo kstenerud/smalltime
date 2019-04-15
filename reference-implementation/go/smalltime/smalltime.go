@@ -6,6 +6,7 @@ package smalltime
 import "time"
 
 import "fmt"
+
 func blah() {
 	fmt.Printf("")
 }
@@ -26,12 +27,12 @@ const mask_second = Smalltime(0x3f) << bitshift_second
 const mask_microsecond = Smalltime(0xfffff)
 
 func is_leap_year(year int) bool {
-	return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
+	return year%4 == 0 && (year%100 != 0 || year%400 == 0)
 }
 
 func ymd_to_doy(year, month, day int) (doy int) {
-	months_from_march := (month + 9) % 12 // [0, 11]
-	doy = (153 * months_from_march + 2) / 5 + day - 1 // [0, 365]
+	months_from_march := (month + 9) % 12       // [0, 11]
+	doy = (153*months_from_march+2)/5 + day - 1 // [0, 365]
 	if is_leap_year(year) {
 		doy = (doy + 60) % 366
 	} else {
@@ -47,9 +48,9 @@ func doy_to_ymd(year, doy int) (month, day int) {
 	} else {
 		doy = (doy + 305) % 365
 	}
-	months_from_march := (5 * doy + 2) / 153 // [0, 11]
-	day = doy - (153 * months_from_march + 2) / 5 + 1 // [1, 31]
-	month = (months_from_march + 2) % 12 + 1 // [1, 12]
+	months_from_march := (5*doy + 2) / 153      // [0, 11]
+	day = doy - (153*months_from_march+2)/5 + 1 // [1, 31]
+	month = (months_from_march+2)%12 + 1        // [1, 12]
 	return month, day
 }
 
