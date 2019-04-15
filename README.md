@@ -1,7 +1,7 @@
 Smalltime
 =========
 
-A simple and convenient binary date & time format in 64 bits. Smalltim values are directly comparable, and the standard Gregorian fields are easily extractable.
+A simple and convenient binary date & time format in 64 bits. Smalltime values are directly comparable, and the standard Gregorian fields are easily extractable.
 
 
 
