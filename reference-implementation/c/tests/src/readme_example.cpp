@@ -4,9 +4,9 @@
 
 static void demonstrate_smalltime()
 {
-	smalltime noon_jan1_2000 =       smalltime_new(2000,  1, 12, 0, 0, 0);
-	smalltime one_oclock_jan1_2000 = smalltime_new(2000,  1, 13, 0, 0, 0);
-	smalltime noon_feb15_1999 =      smalltime_new(1999, 46, 12, 0, 0, 0);
+	smalltime noon_jan1_2000 =       smalltime_new(2000, 1, 1, 12, 0, 0, 0);
+	smalltime one_oclock_jan1_2000 = smalltime_new(2000, 1, 1, 13, 0, 0, 0);
+	smalltime noon_feb15_1999 =      smalltime_new(1999, 2, 15, 12, 0, 0, 0);
 
 	if(one_oclock_jan1_2000 > noon_jan1_2000)
 	{
@@ -20,13 +20,15 @@ static void demonstrate_smalltime()
 
 	smalltime some_time = 0;
 	some_time = smalltime_with_year(some_time, 2018);
-	some_time = smalltime_with_day(some_time, 365);
+	some_time = smalltime_with_month(some_time, 12);
+	some_time = smalltime_with_day(some_time, 31);
 	some_time = smalltime_with_hour(some_time, 14);
 	some_time = smalltime_with_minute(some_time, 30);
 	some_time = smalltime_with_second(some_time, 19);
 	some_time = smalltime_with_microsecond(some_time, 885);
-	printf("Year %d, day %d, hour %d, minute %d, second %d.%06d\n",
+	printf("Year %d, month %d, day %d, hour %d, minute %d, second %d.%06d\n",
 		smalltime_get_year(some_time),
+		smalltime_get_month(some_time),
 		smalltime_get_day(some_time),
 		smalltime_get_hour(some_time),
 		smalltime_get_minute(some_time),

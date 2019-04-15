@@ -56,13 +56,15 @@ typedef int64_t smalltime;
 
 // Internal defines. These will be undef'd at the end of the header.
 #define SMALLTIME_BITSHIFT_YEAR    46
+#define SMALLTIME_BITSHIFT_MONTH   42
 #define SMALLTIME_BITSHIFT_DAY     37
 #define SMALLTIME_BITSHIFT_HOUR    32
 #define SMALLTIME_BITSHIFT_MINUTE  26
 #define SMALLTIME_BITSHIFT_SECOND  20
 
 #define SMALLTIME_MASK_YEAR        (0x3ffffLL << SMALLTIME_BITSHIFT_YEAR)
-#define SMALLTIME_MASK_DAY         (0x1ffLL   << SMALLTIME_BITSHIFT_DAY)
+#define SMALLTIME_MASK_MONTH       (0xfLL     << SMALLTIME_BITSHIFT_MONTH)
+#define SMALLTIME_MASK_DAY         (0x1fLL    << SMALLTIME_BITSHIFT_DAY)
 #define SMALLTIME_MASK_HOUR        (0x1fLL    << SMALLTIME_BITSHIFT_HOUR)
 #define SMALLTIME_MASK_MINUTE      (0x3fLL    << SMALLTIME_BITSHIFT_MINUTE)
 #define SMALLTIME_MASK_SECOND      (0x3fLL    << SMALLTIME_BITSHIFT_SECOND)
@@ -75,16 +77,18 @@ typedef int64_t smalltime;
  * Note: This function does NOT validate input! Make sure your source values are correct!
  *
  * @param year The year (-131072 - 131071). Note: 1 = 1 AD, 0 = 1 BC, -1 = 2 BC, ...
- * @param day The day of the year, allowing for leap year (1 - 366).
+ * @param month The month of the year (1 - 12).
+ * @param day The day of the month (1 - 31).
  * @param hour The hour of the day (0 - 23).
  * @param minute The minute of the hour (0 - 59).
  * @param second The second of the minute, allowing for leap second (0 - 60).
  * @param microsecond The microsecond of the second (0 - 999999).
  * @return A new time value.
  */
-static inline smalltime smalltime_new(int year, int day, int hour, int minute, int second, int microsecond)
+static inline smalltime smalltime_new(int year, int month, int day, int hour, int minute, int second, int microsecond)
 {
     return ((smalltime)year   << SMALLTIME_BITSHIFT_YEAR)   |
+           ((smalltime)month  << SMALLTIME_BITSHIFT_MONTH)  |
            ((smalltime)day    << SMALLTIME_BITSHIFT_DAY)    |
            ((smalltime)hour   << SMALLTIME_BITSHIFT_HOUR)   |
            ((smalltime)minute << SMALLTIME_BITSHIFT_MINUTE) |
@@ -120,6 +124,31 @@ static inline smalltime smalltime_with_year(smalltime time, int year)
 }
 
 /**
+ * Get the month component from a time value.
+ *
+ * @param time The existing time value.
+ * @return the day component.
+ */
+static inline int smalltime_get_month(smalltime time)
+{
+    return (time & SMALLTIME_MASK_MONTH) >> SMALLTIME_BITSHIFT_MONTH;
+}
+
+/**
+ * Get a new time based on an existing one, with a new month component.
+ * Valid range is 1 to 12.
+ * Note: Input is NOT validated!
+ *
+ * @param time The existing time value.
+ * @param month The month component.
+ * @return the new time value.
+ */
+static inline smalltime smalltime_with_month(smalltime time, int month)
+{
+    return (time & ~SMALLTIME_MASK_MONTH) | ((smalltime)month << SMALLTIME_BITSHIFT_MONTH);
+}
+
+/**
  * Get the day component from a time value.
  *
  * @param time The existing time value.
@@ -132,8 +161,7 @@ static inline int smalltime_get_day(smalltime time)
 
 /**
  * Get a new time based on an existing one, with a new day component.
- * Valid range is 1 to 366 (ordinal date).
- * The value 366 is to support leap years.
+ * Valid range is 1 to 31.
  * Note: Input is NOT validated!
  *
  * @param time The existing time value.

@@ -174,7 +174,7 @@ func TestDays(t *testing.T) {
 		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
 	}
 	year = 2004
-	for day := 0; day < 30; day++ {
+	for day := 1; day < 30; day++ {
 		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
 	}
 }
@@ -309,7 +309,11 @@ func TestComparisons(t *testing.T) {
 }
 
 func TestSpecExamples(t *testing.T) {
-	assert_decode(t, Smalltime(0x1f06568590dbc2e), 1985, 10, 26, 8, 22, 16, 900142)
-	assert_decode(t, Smalltime(0x1f06588590dbc2e), 1985, 10, 27, 8, 22, 16, 900142)
-	assert_decode(t, Smalltime(0x1f06568550dbc2e), 1985, 10, 26, 8, 21, 16, 900142)
+	assert_decode(t, Smalltime(0x1f06b48590dbc2e), 1985, 10, 26, 8, 22, 16, 900142)
+	assert_decode(t, Smalltime(0x1f06b68590dbc2e), 1985, 10, 27, 8, 22, 16, 900142)
+	assert_decode(t, Smalltime(0x1f06b48550dbc2e), 1985, 10, 26, 8, 21, 16, 900142)
+
+	assert_encode(t, 1985, 10, 26, 8, 22, 16, 900142, Smalltime(0x1f06b48590dbc2e))
+	assert_encode(t, 1985, 10, 27, 8, 22, 16, 900142, Smalltime(0x1f06b68590dbc2e))
+	assert_encode(t, 1985, 10, 26, 8, 21, 16, 900142, Smalltime(0x1f06b48550dbc2e))
 }

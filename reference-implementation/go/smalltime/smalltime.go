@@ -5,22 +5,18 @@ package smalltime
 
 import "time"
 
-import "fmt"
-
-func blah() {
-	fmt.Printf("")
-}
-
 type Smalltime int64
 
 const bitshift_year = 46
-const bitshift_doy = 37
+const bitshift_month = 42
+const bitshift_day = 37
 const bitshift_hour = 32
 const bitshift_minute = 26
 const bitshift_second = 20
 
 const mask_year = uint64(0x3ffff) << bitshift_year
-const mask_doy = Smalltime(0x1ff) << bitshift_doy
+const mask_month = Smalltime(0xf) << bitshift_month
+const mask_day = Smalltime(0x1f) << bitshift_day
 const mask_hour = Smalltime(0x1f) << bitshift_hour
 const mask_minute = Smalltime(0x3f) << bitshift_minute
 const mask_second = Smalltime(0x3f) << bitshift_second
@@ -60,18 +56,19 @@ func FromTime(t time.Time) Smalltime {
 
 // Set the time using the Gregorian calendar.
 func New(year, month, day, hour, minute, second, microsecond int) Smalltime {
-	return NewWithDoy(year, ymd_to_doy(year, month, day), hour, minute, second, microsecond)
-}
-
-// Set the time using day-of-year notation.
-// This is required for dates prior to October 1582.
-func NewWithDoy(year, day_of_year, hour, minute, second, microsecond int) Smalltime {
 	return Smalltime(year)<<bitshift_year |
-		Smalltime(day_of_year)<<bitshift_doy |
+		Smalltime(month)<<bitshift_month |
+		Smalltime(day)<<bitshift_day |
 		Smalltime(hour)<<bitshift_hour |
 		Smalltime(minute)<<bitshift_minute |
 		Smalltime(second)<<bitshift_second |
 		Smalltime(microsecond)
+}
+
+// Set the time using day-of-year notation.
+func NewWithDoy(year, day_of_year, hour, minute, second, microsecond int) Smalltime {
+	month, day := doy_to_ymd(year, day_of_year)
+	return New(year, month, day, hour, minute, second, microsecond)
 }
 
 func (t Smalltime) AsTime() time.Time {
@@ -83,17 +80,15 @@ func (time Smalltime) Year() int {
 }
 
 func (time Smalltime) Doy() int {
-	return int((time & mask_doy) >> bitshift_doy)
+	return ymd_to_doy(time.Year(), time.Month(), time.Day())
 }
 
 func (time Smalltime) Month() int {
-	month, _ := doy_to_ymd(time.Year(), time.Doy())
-	return month
+	return int((time & mask_month) >> bitshift_month)
 }
 
 func (time Smalltime) Day() int {
-	_, day := doy_to_ymd(time.Year(), time.Doy())
-	return day
+	return int((time & mask_day) >> bitshift_day)
 }
 
 func (time Smalltime) Hour() int {
@@ -110,36 +105,4 @@ func (time Smalltime) Second() int {
 
 func (time Smalltime) Microsecond() int {
 	return int(time & mask_microsecond)
-}
-
-func (time Smalltime) WithYear(year int) Smalltime {
-	return time&Smalltime(^mask_year) | Smalltime(year)<<bitshift_year
-}
-
-func (time Smalltime) WithDoy(doy int) Smalltime {
-	return time&Smalltime(^mask_doy) | Smalltime(doy)<<bitshift_doy
-}
-
-func (time Smalltime) WithMonth(month int) Smalltime {
-	return time.WithDoy(ymd_to_doy(time.Year(), month, time.Day()))
-}
-
-func (time Smalltime) WithDay(day int) Smalltime {
-	return time.WithDoy(ymd_to_doy(time.Year(), time.Month(), day))
-}
-
-func (time Smalltime) WithHour(hour int) Smalltime {
-	return time&Smalltime(^mask_hour) | Smalltime(hour)<<bitshift_hour
-}
-
-func (time Smalltime) WithMinute(minute int) Smalltime {
-	return time&Smalltime(^mask_minute) | Smalltime(minute)<<bitshift_minute
-}
-
-func (time Smalltime) WithSecond(second int) Smalltime {
-	return time&Smalltime(^mask_second) | Smalltime(second)<<bitshift_second
-}
-
-func (time Smalltime) WithMicrosecond(microsecond int) Smalltime {
-	return time&Smalltime(^mask_microsecond) | Smalltime(microsecond)
 }
