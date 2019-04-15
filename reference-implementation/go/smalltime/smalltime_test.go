@@ -1,6 +1,7 @@
 package smalltime
 
 import "testing"
+import "time"
 import "fmt"
 
 func workaround_unused_import_error_fmt() {
@@ -48,6 +49,35 @@ func assert_ymd_to_doy(t *testing.T, year, month, day, doy int) {
 	}
 }
 
+func assert_time_equivalence(t *testing.T, year, month, day, hour, minute, second, usec int) {
+	smtime := New(year, month, day, hour, minute, second, usec)
+	gotime := time.Date(year, time.Month(month), day, hour, minute, second, usec*1000, time.UTC)
+
+	if smtime.Year() != gotime.Year() ||
+		smtime.Month() != int(gotime.Month()) ||
+		smtime.Day() != gotime.Day() ||
+		smtime.Hour() != gotime.Hour() ||
+		smtime.Minute() != gotime.Minute() ||
+		smtime.Second() != gotime.Second() ||
+		smtime.Microsecond() != gotime.Nanosecond()/1000 {
+		t.Errorf("%04d-%02d-%02dT%02d:%02d:%02d.%06d != %v",
+			smtime.Year(), smtime.Month(), smtime.Day(), smtime.Hour(),
+			smtime.Minute(), smtime.Second(), smtime.Microsecond(), gotime)
+	}
+
+	if smtime.AsTime() != gotime {
+		t.Errorf("%04d-%02d-%02dT%02d:%02d:%02d.%06d did not convert cleanly to %v",
+			smtime.Year(), smtime.Month(), smtime.Day(), smtime.Hour(),
+			smtime.Minute(), smtime.Second(), smtime.Microsecond(), gotime)
+	}
+
+	if FromTime(gotime) != smtime {
+		t.Errorf("%v did not convert cleanly to %04d-%02d-%02dT%02d:%02d:%02d.%06d",
+			gotime, smtime.Year(), smtime.Month(), smtime.Day(), smtime.Hour(),
+			smtime.Minute(), smtime.Second(), smtime.Microsecond())
+	}
+}
+
 var days_in_month_normal = [...]int{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 var days_in_month_leap = [...]int{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 
@@ -72,6 +102,99 @@ func Test409Years(t *testing.T) {
 				assert_encode_decode(t, year, month, day, 0, 0, 0, 0)
 			}
 		}
+	}
+}
+
+func TestMicroseconds(t *testing.T) {
+	year := 2003
+	month := 11
+	day := 15
+	hour := 8
+	minute := 30
+	second := 55
+	for microsecond := 0; microsecond < 1000000; microsecond++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
+	}
+}
+
+func TestSeconds(t *testing.T) {
+	year := 2003
+	month := 11
+	day := 15
+	hour := 8
+	minute := 30
+	microsecond := 1402
+	for second := 0; second < 60; second++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
+	}
+}
+
+func TestMinutes(t *testing.T) {
+	year := 2003
+	month := 11
+	day := 15
+	hour := 8
+	second := 30
+	microsecond := 1402
+	for minute := 0; minute < 60; minute++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
+	}
+}
+
+func TestHours(t *testing.T) {
+	year := 2003
+	month := 11
+	day := 15
+	minute := 30
+	second := 55
+	microsecond := 1402
+	for hour := 0; hour < 24; hour++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
+	}
+}
+
+func TestDays(t *testing.T) {
+	year := 2003
+	month := 11
+	hour := 8
+	minute := 30
+	second := 55
+	microsecond := 1402
+	for day := 1; day < 30; day++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
+	}
+	year = 2004
+	for day := 0; day < 30; day++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
+	}
+}
+
+func TestMonths(t *testing.T) {
+	year := 2003
+	day := 15
+	hour := 8
+	minute := 30
+	second := 55
+	microsecond := 1402
+	for month := 1; month < 12; month++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
+	}
+	year = 2004
+	for month := 1; month < 12; month++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
+	}
+}
+
+func TestYears(t *testing.T) {
+	month := 11
+	day := 15
+	hour := 8
+	minute := 15
+	second := 30
+	microsecond := 1402
+
+	for year := -131072; year < 131071; year++ {
+		assert_time_equivalence(t, year, month, day, hour, minute, second, microsecond)
 	}
 }
 
@@ -163,5 +286,4 @@ func TestReadmeExamples(t *testing.T) {
 	assert_decode(t, Smalltime(0x1f06568590dbc2e), 1985, 10, 26, 8, 22, 16, 900142)
 	assert_decode(t, Smalltime(0x1f06588590dbc2e), 1985, 10, 27, 8, 22, 16, 900142)
 	assert_decode(t, Smalltime(0x1f06568550dbc2e), 1985, 10, 26, 8, 21, 16, 900142)
-
 }
