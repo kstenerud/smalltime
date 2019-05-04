@@ -1,9 +1,9 @@
-Reference Implementation for Smalltime
-======================================
+Reference Implementation for Smalltime and Nanotime
+===================================================
 
-A C implementation to demonstrate smalltime.
+A C implementation to demonstrate smalltime and nanotime.
 
-Implemented as a header only (`smalltime.h`).
+Implemented as a header only (`smalltime.h` and `nanotime.h`).
 
 
 
@@ -55,41 +55,46 @@ static void demonstrate_smalltime()
 }
 ```
 
-Converting from Gregorian month and day to day-of-year is pretty simple:
-
 ```c
-static int g_days_to_the_month[] =
-{
-    0, // Nothing
-    g_days_to_the_month[ 0] +  0, // January
-    g_days_to_the_month[ 1] + 31, // February
-    g_days_to_the_month[ 2] + 28, // March
-    g_days_to_the_month[ 3] + 31, // April
-    g_days_to_the_month[ 4] + 30, // May
-    g_days_to_the_month[ 5] + 31, // June
-    g_days_to_the_month[ 6] + 30, // July
-    g_days_to_the_month[ 7] + 31, // August
-    g_days_to_the_month[ 8] + 31, // September
-    g_days_to_the_month[ 9] + 30, // October
-    g_days_to_the_month[10] + 31, // November
-    g_days_to_the_month[11] + 30, // December
-};
+#include <smalltime/nanotime.h>
+#include <stdio.h>
 
-static inline int is_leap_year(int year)
+static void demonstrate_nanotime()
 {
-    return (year % 4 == 0) && (year % 100 != 0 || year % 400 == 0);
-}
+    nanotime noon_jan1_2000 =       nanotime_new(2000, 1, 1, 12, 0, 0, 0);
+    nanotime one_oclock_jan1_2000 = nanotime_new(2000, 1, 1, 13, 0, 0, 0);
+    nanotime noon_feb15_1999 =      nanotime_new(1999, 2, 15, 12, 0, 0, 0);
 
-unsigned int to_doy(int year, unsigned int month, unsigned int day)
-{
-    unsigned int days = g_days_to_the_month[month] + day;
-    if(is_leap_year(year))
+    if(one_oclock_jan1_2000 > noon_jan1_2000)
     {
-        days++;
+        printf("One o'clock is greater than noon.\n");
     }
-    return days;
+
+    if(noon_feb15_1999 < noon_jan1_2000)
+    {
+        printf("feb 15, 1999 is less than jan 1, 2000\n");
+    }
+
+    nanotime some_time = 0;
+    some_time = nanotime_with_year(some_time, 2018);
+    some_time = nanotime_with_month(some_time, 12);
+    some_time = nanotime_with_day(some_time, 31);
+    some_time = nanotime_with_hour(some_time, 14);
+    some_time = nanotime_with_minute(some_time, 30);
+    some_time = nanotime_with_second(some_time, 19);
+    some_time = nanotime_with_nanosecond(some_time, 885);
+    printf("Year %d, month %d, day %d, hour %d, minute %d, second %d.%06d\n",
+        nanotime_get_year(some_time),
+        nanotime_get_month(some_time),
+        nanotime_get_day(some_time),
+        nanotime_get_hour(some_time),
+        nanotime_get_minute(some_time),
+        nanotime_get_second(some_time),
+        nanotime_get_nanosecond(some_time)
+        );
 }
 ```
+
 
 
 Requirements

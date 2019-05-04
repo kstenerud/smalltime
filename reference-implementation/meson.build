@@ -11,8 +11,9 @@ project_headers = [
 ]
 
 project_test_files = [
-  'tests/src/library.cpp',
-  'tests/src/readme_example.cpp',
+  'tests/src/smalltime_test.cpp',
+  'tests/src/nanotime_test.cpp',
+  'tests/src/readme_examples_test.cpp',
 ]
 
 build_args = [

@@ -73,14 +73,14 @@ static void test_single_date(
 // Tests
 // ==================================================================
 
-TEST(Time, readme_examples)
+TEST(Smalltime, spec_examples)
 {
     test_single_date(0x1f06b48590dbc2eLL, 1985, 10, 26, 8, 22, 16, 900142);
     test_single_date(0x1f06b68590dbc2eLL, 1985, 10, 27, 8, 22, 16, 900142);
     test_single_date(0x1f06b48550dbc2eLL, 1985, 10, 26, 8, 21, 16, 900142);
 }
 
-TEST(Time, comparisons)
+TEST(Smalltime, comparisons)
 {
     EXPECT_GT(smalltime_new(2000, 1, 1, 0, 0, 0, 1), smalltime_new(2000, 1, 1, 0, 0, 0, 0));
     EXPECT_GT(smalltime_new(2000, 1, 1, 0, 0, 1, 0), smalltime_new(2000, 1, 1, 0, 0, 0, 999999));
@@ -97,7 +97,7 @@ TEST(Time, comparisons)
     EXPECT_GT(smalltime_new(1, 1, 1, 0, 0, 0, 0), smalltime_new(-1, 1, 1, 0, 0, 0, 0));
 }
 
-TEST(Time, year)
+TEST(Smalltime, year)
 {
     int month = 1;
     int day = 11;
@@ -111,7 +111,7 @@ TEST(Time, year)
     }
 }
 
-TEST(Time, day)
+TEST(Smalltime, day)
 {
     int year = 2000;
     int month = 1;
@@ -125,7 +125,7 @@ TEST(Time, day)
     }
 }
 
-TEST(Time, hour)
+TEST(Smalltime, hour)
 {
     int year = 2000;
     int month = 1;
@@ -139,7 +139,7 @@ TEST(Time, hour)
     }
 }
 
-TEST(Time, minute)
+TEST(Smalltime, minute)
 {
     int year = 2000;
     int month = 1;
@@ -153,7 +153,7 @@ TEST(Time, minute)
     }
 }
 
-TEST(Time, second)
+TEST(Smalltime, second)
 {
     int year = 2000;
     int month = 1;
@@ -167,7 +167,7 @@ TEST(Time, second)
     }
 }
 
-TEST(Time, microsecond)
+TEST(Smalltime, microsecond)
 {
     int year = 2000;
     int month = 1;
