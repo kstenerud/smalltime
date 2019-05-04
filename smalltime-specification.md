@@ -33,7 +33,7 @@ Time fields are bit-encoded according to the following table, which lists their 
 | Hour        |       32 |     5 |       0 |     23 | (value >> 32) & 31   |
 | Minute      |       26 |     6 |       0 |     59 | (value >> 26) & 63   |
 | Second      |       20 |     6 |       0 |     60 | (value >> 20) & 63   |
-| Microsecond |        0 |    20 |       0 | 999999 | value & 1048575      |
+| Microsecond |        0 |    20 |       0 | 999999 | value & 0xfffff      |
 
 
 ### Special Field Notes
