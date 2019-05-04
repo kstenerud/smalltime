@@ -78,6 +78,7 @@ TEST(Nanotime, spec_examples)
     test_single_date(0x0fad2164076290ee, 1985, 10, 26, 8, 22, 16, 123900142);
     test_single_date(0x0fada164076290ee, 1985, 10, 27, 8, 22, 16, 123900142);
     test_single_date(0x0fad2154076290ee, 1985, 10, 26, 8, 21, 16, 123900142);
+    test_single_date(0x1dcfdfbefb9ac9ff, 1999, 12, 31, 23, 59, 59, 999999999);
 }
 
 TEST(Nanotime, comparisons)
