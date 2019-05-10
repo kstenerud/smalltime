@@ -27,7 +27,7 @@ Time fields are bit-encoded according to the following table, which lists their 
 
 | Field       | Position | Width | Min  | Max       | Extraction Algorithm |
 | ----------- | -------- | ----- | ---- | --------- | -------------------- |
-| Year        |       56 |     8 | 1970 |      2226 | (value >> 56)        |
+| Year        |       56 |     8 | 1970 |      2226 | (value >> 56) + 1970 |
 | Month       |       52 |     4 |    1 |        12 | (value >> 52) & 16   |
 | Day         |       47 |     5 |    1 |        31 | (value >> 47) & 31   |
 | Hour        |       42 |     5 |    0 |        23 | (value >> 42) & 31   |
