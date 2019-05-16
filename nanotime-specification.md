@@ -72,8 +72,8 @@ Example
 
 #### Comparability
 
- * Adding a day (Oct 27th, 1985 8:22:16.900142) encodes to `0x0fada164076290ee`, which is greater than `0x0fad2164076290ee`.
- * Subtracting a minute (Oct 26th, 1985 8:21:16.900142) encodes to `0x0fad2154076290ee`, which is less than `0x0fad2164076290ee`.
+ * Adding a day (Oct 27th, 1985 8:22:16.123900142) encodes to `0x0fada164076290ee`, which is greater than `0x0fad2164076290ee`.
+ * Subtracting a minute (Oct 26th, 1985 8:21:16.123900142) encodes to `0x0fad2154076290ee`, which is less than `0x0fad2164076290ee`.
 
 
 
