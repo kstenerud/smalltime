@@ -50,7 +50,7 @@ The second field goes to 60 to support leap seconds.
 
 
 
-Propeptic Gregorian Calendar
+Proleptic Gregorian Calendar
 -----------------------------
 
 Dates prior to the introduction of the Gregorian Calendar in 1582 must be stored according to the proleptic Gregorian calender.
