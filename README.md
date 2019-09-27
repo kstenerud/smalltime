@@ -31,7 +31,7 @@ Specifications
 Implementations
 ---------------
 
-* [C implementation](reference-implementation)
+* [C implementation](https://github.com/kstenerud/c-smalltime)
 * [Go implementation](https://github.com/kstenerud/go-smalltime)
 
 
